@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import uuid
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
@@ -10,8 +11,18 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from actstream import settings as actstream_settings
-from actstream.base.models import UUIDModel
 from actstream.managers import FollowManager
+
+
+class UUIDModel(models.Model):
+    """An abstract base class model that makes primary key `id` as UUID
+    instead of default auto incremented number.
+    """
+
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+
+    class Meta:
+        abstract = True
 
 
 class Follow(UUIDModel):
