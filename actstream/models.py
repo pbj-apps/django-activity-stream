@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import uuid
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
@@ -13,7 +14,18 @@ from actstream import settings as actstream_settings
 from actstream.managers import FollowManager
 
 
-class Follow(models.Model):
+class UUIDModel(models.Model):
+    """An abstract base class model that makes primary key `id` as UUID
+    instead of default auto incremented number.
+    """
+
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+
+    class Meta:
+        abstract = True
+
+
+class Follow(UUIDModel):
     """
     Lets a user follow the activities of any specific actor
     """
@@ -42,7 +54,7 @@ class Follow(models.Model):
         return '{} -> {} : {}'.format(self.user, self.follow_object, self.flag)
 
 
-class Action(models.Model):
+class Action(UUIDModel):
     """
     Action model describing the actor acting out a verb (on an optional
     target).
